@@ -49,7 +49,8 @@ def cooling_schedule(initial_temperature: float, cooling_rate: float, iteration:
     Esta función se invoca desde simulated_annealing en cada iteración.
     """
     # TODO: Add your code here
-    raise NotImplementedError("Punto 2: implemente cooling_schedule")
+    temperature = initial_temperature * (cooling_rate ** iteration)
+    return temperature
 
 
 def simulated_annealing(
@@ -80,6 +81,35 @@ def simulated_annealing(
     minimum_temperature = 1e-9
 
     # TODO: Add your code here
+    actual = initial_configuration
+    iteracion = 1
+    mejor = actual
+    historial = [actual]
+    temperature = initial_temperature
+    while iteracion < max_iterations and temperature > minimum_temperature:
+        candidato = rng.choice(problem.neighbors(actual))
+        delta = configuration_score(problem, candidato) - configuration_score(problem, actual)
+        if delta > 0:
+            actual = candidato
+            mejor = candidato
+            historial.append(actual)
+        else:
+            acceptance_probability = math.exp(delta / temperature)
+            if rng.random() < acceptance_probability:
+                actual = candidato
+                historial.append(actual)
+        
+        temperature = cooling_schedule(initial_temperature, cooling_rate, iteracion)
+        iteracion += 1
+    
+    return OptimizationResult(
+        best_configuration=mejor,
+        best_score=configuration_score(problem, mejor),
+        evaluations=iteracion,
+        history=historial,
+    )
+                
+            
     raise NotImplementedError("Punto 2: implemente simulated_annealing")
 
 
