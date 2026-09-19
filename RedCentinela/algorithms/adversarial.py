@@ -40,8 +40,42 @@ class MinimaxAgent(MultiAgentSearchAgent):
         - Reinicie las métricas y cuente una vez cada estado procesado, incluida
           la raíz. Retorne la acción de MAX y conserve la primera en los empates.
         """
-        # TODO: Add your code here
-        raise NotImplementedError("Punto 4: implemente MinimaxAgent.get_action")
+        self.nodes_evaluated = 0
+
+        def valor(estado: GameState, agente: int, profundidad_restante: int) -> float:
+            self.nodes_evaluated += 1
+            if estado.is_win() or estado.is_lose() or profundidad_restante == 0:
+                return evaluation_function(estado)
+
+            siguiente_agente = (agente + 1) % estado.get_num_agents()
+            acciones = estado.get_legal_actions(agente)
+            if agente == 0:
+                mejor_valor = float("-inf")
+                for accion in acciones:
+                    sucesor = estado.generate_successor(agente, accion)
+                    valor_sucesor = valor(sucesor, siguiente_agente, profundidad_restante - 1)
+                    if valor_sucesor > mejor_valor:
+                        mejor_valor = valor_sucesor
+                return mejor_valor
+            else:
+                peor_valor = float("inf")
+                for accion in acciones:
+                    sucesor = estado.generate_successor(agente, accion)
+                    valor_sucesor = valor(sucesor, siguiente_agente, profundidad_restante - 1)
+                    if valor_sucesor < peor_valor:
+                        peor_valor = valor_sucesor
+                return peor_valor
+
+        self.nodes_evaluated += 1
+        mejor_accion = None
+        mejor_valor = float("-inf")
+        for accion in state.get_legal_actions(0):
+            sucesor = state.generate_successor(0, accion)
+            valor_sucesor = valor(sucesor, 1, self.depth - 1)
+            if valor_sucesor > mejor_valor:
+                mejor_valor = valor_sucesor
+                mejor_accion = accion
+        return mejor_accion
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
