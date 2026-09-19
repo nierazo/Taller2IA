@@ -61,5 +61,51 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         - En MAX actualice alpha y corte si valor >= beta; en MIN actualice beta
           y corte si valor <= alpha.
         """
-        # TODO: Add your code here
-        raise NotImplementedError("Punto 5: implemente AlphaBetaAgent.get_action")
+        self.nodes_evaluated = 0
+
+        def valor(nodo: GameState, agente: int, restante: int, alpha: float, beta: float) -> float:
+            self.nodes_evaluated += 1
+            if nodo.is_win() or nodo.is_lose() or restante == 0:
+                return evaluation_function(nodo)
+
+            siguiente = (agente + 1) % nodo.get_num_agents()
+            acciones = nodo.get_legal_actions(agente)
+
+            if agente == 0:
+                mejor = float("-inf")
+                for accion in acciones:
+                    sucesor = nodo.generate_successor(agente, accion)
+                    mejor = max(mejor, valor(sucesor, siguiente, restante - 1, alpha, beta))
+                    if mejor >= beta:
+                        return mejor
+                    alpha = max(alpha, mejor)
+                return mejor
+
+            mejor = float("inf")
+            for accion in acciones:
+                sucesor = nodo.generate_successor(agente, accion)
+                mejor = min(mejor, valor(sucesor, siguiente, restante - 1, alpha, beta))
+                if mejor <= alpha:
+                    return mejor
+                beta = min(beta, mejor)
+            return mejor
+
+        # la raíz también es un estado procesado por la búsqueda
+        self.nodes_evaluated += 1
+        acciones_raiz = state.get_legal_actions(0)
+        if not acciones_raiz:
+            return None
+
+        mejor_accion = acciones_raiz[0]
+        mejor_valor = float("-inf")
+        alpha = float("-inf")
+        beta = float("inf")
+        for accion in acciones_raiz:
+            sucesor = state.generate_successor(0, accion)
+            valor_accion = valor(sucesor, 1, self.depth - 1, alpha, beta)
+            if valor_accion > mejor_valor:
+                mejor_valor = valor_accion
+                mejor_accion = accion
+            alpha = max(alpha, mejor_valor)
+
+        return mejor_accion

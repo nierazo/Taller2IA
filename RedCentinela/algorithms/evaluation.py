@@ -38,5 +38,22 @@ def evaluation_function(state: GameState) -> float:
     if state.is_win() or state.is_lose():
         return base_evaluation_function(state)
 
-    # TODO: Add your code here
-    return base_evaluation_function(state)
+    pendientes = state.pending_terminals
+    distancia_objetivo = min(
+        (state.layout.distance(state.defender_position, terminal) for terminal in pendientes),
+        default=0,
+    )
+    distancia_intruso = state.layout.distance(state.defender_position, state.intruder_position)
+    movilidad = len(state.get_legal_actions(0))
+
+    valor = state.get_score()
+    valor -= 25.0 * len(pendientes)
+    if distancia_objetivo != float("inf"):
+        valor -= 3.0 * distancia_objetivo
+    if distancia_intruso != float("inf"):
+        valor += min(distancia_intruso, 6.0)
+        if distancia_intruso <= 1:
+            valor -= 150.0
+    valor += 2.0 * movilidad
+
+    return 900.0 * math.tanh(valor / 150.0)
