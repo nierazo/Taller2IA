@@ -1,5 +1,3 @@
-import math
-
 from world.game_state import GameState
 
 
@@ -55,7 +53,6 @@ def evaluation_function(state: GameState) -> float:
         if distancia_intruso <= 1:
             valor -= 150.0
     valor += 2.0 * movilidad
-    
-    rta = 900.0 * math.tanh(valor / 150.0)
 
+    rta = max(-900.0, min(900.0, valor))
     return rta
