@@ -135,7 +135,8 @@ def simulated_annealing(
     return OptimizationResult(
         best_configuration=mejor,
         best_score=configuration_score(problem, mejor),
-        evaluations=iteracion,
+        evaluations=iteracion*2, # Es 2 veces las iteraciones porque por cada iteracion se evalua en actual y el candidato
+        iterations=iteracion,
         history=historial,
     )
                 
