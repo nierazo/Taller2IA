@@ -63,7 +63,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         self.nodes_evaluated = 0
 
-        def valor(nodo: GameState, agente: int, restante: int, alpha: float, beta: float) -> float:
+        def valor(nodo, agente, restante, alpha, beta):
             self.nodes_evaluated += 1
             if nodo.is_win() or nodo.is_lose() or restante == 0:
                 return evaluation_function(nodo)
