@@ -55,5 +55,7 @@ def evaluation_function(state: GameState) -> float:
         if distancia_intruso <= 1:
             valor -= 150.0
     valor += 2.0 * movilidad
+    
+    rta = 900.0 * math.tanh(valor / 150.0)
 
-    return 900.0 * math.tanh(valor / 150.0)
+    return rta

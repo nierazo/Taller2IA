@@ -90,7 +90,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 beta = min(beta, mejor)
             return mejor
 
-        # la raíz también es un estado procesado por la búsqueda
+        # la raíz también se evalúa
         self.nodes_evaluated += 1
         acciones_raiz = state.get_legal_actions(0)
         if not acciones_raiz:
